@@ -1,7 +1,7 @@
-import Actor
-import Critic
-import ReplayBuffer
-import OUNoise
+from actor import Actor
+from critic import Critic
+from replay_buffer import ReplayBuffer
+from ou_noise import OUNoise
 import numpy as np
 
 
