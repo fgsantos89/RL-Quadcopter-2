@@ -104,8 +104,11 @@ class DDPG():
             x=[states, actions], y=Q_targets)
 
         # Train actor model (local)
-        action_gradients = np.reshape(self.critic_local.get_action_gradients(
-            [states, actions, 0]), (-1, self.action_size))
+        print("states={}, actions={}".format(states.shape, actions.shape))
+        action_gradients_critic = self.critic_local.get_action_gradients(
+            [states, actions, 0])
+        action_gradients = np.reshape(action_gradients_critic,
+                (-1, self.action_size))
         # custom training function
         self.actor_local.train_fn([states, action_gradients, 1])
 
