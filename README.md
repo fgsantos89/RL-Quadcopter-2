@@ -38,5 +38,5 @@ jupyter notebook Quadcopter_Project.ipynb
 
 Running on docker with keras with tensorflow-cpu on backend 
 ```
-docker run -d -p 8888:8888 -v $(pwd):/notebook -e KERAS_BACKEND=tensorflow ermaker/keras-jupyter
+docker run --rm -p 8888:8888 -v "$PWD":/home/jovyan/work --name notebook jupyter/tensorflow-notebook
 ```

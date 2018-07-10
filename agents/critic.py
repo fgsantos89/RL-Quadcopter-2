@@ -2,7 +2,7 @@ from keras import layers, models, optimizers
 from keras import backend as K
 
 
-class Critic:
+class Critic():
     """Critic (Value) Model."""
 
     def __init__(self, state_size, action_size):
@@ -70,5 +70,5 @@ class Critic:
         # Define an additional function to fetch action gradients
         # (to be used by actor model)
         self.get_action_gradients = K.function(
-            inputs=[self.model.input, K.learning_phase()],
+            inputs=[*self.model.input, K.learning_phase()],
             outputs=action_gradients)

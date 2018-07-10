@@ -2,7 +2,7 @@ import numpy as np
 import copy
 
 
-class OUNoise:
+class OUNoise():
     """Ornstein-Uhlenbeck process."""
 
     def __init__(self, size, mu, theta, sigma):

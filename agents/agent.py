@@ -1,7 +1,7 @@
-from actor import Actor
-from critic import Critic
-from replay_buffer import ReplayBuffer
-from ou_noise import OUNoise
+from .actor import Actor
+from .critic import Critic
+from .replay_buffer import ReplayBuffer
+from .ou_noise import OUNoise
 import numpy as np
 
 
@@ -104,11 +104,10 @@ class DDPG():
             x=[states, actions], y=Q_targets)
 
         # Train actor model (local)
-        print("states={}, actions={}".format(states.shape, actions.shape))
         action_gradients_critic = self.critic_local.get_action_gradients(
             [states, actions, 0])
         action_gradients = np.reshape(action_gradients_critic,
-                (-1, self.action_size))
+                                      (-1, self.action_size))
         # custom training function
         self.actor_local.train_fn([states, action_gradients, 1])
 
