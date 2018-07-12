@@ -1,4 +1,4 @@
-from keras import layers, models, optimizers
+from keras import layers, models, optimizers, regularizers
 from keras import backend as K
 
 
@@ -31,9 +31,12 @@ class Actor():
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # Add hidden layers
-        net = layers.Dense(units=32, activation='relu')(states)
-        net = layers.Dense(units=64, activation='relu')(net)
-        net = layers.Dense(units=32, activation='relu')(net)
+        net = layers.Dense(units=32, activation='relu',
+                           kernel_regularizer=regularizers.l2(0.9))(states)
+        net = layers.Dense(units=64, activation='relu',
+                           kernel_regularizer=regularizers.l2(0.9))(net)
+        net = layers.Dense(units=32, activation='relu',
+                           kernel_regularizer=regularizers.l2(0.9))(net)
 
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.
