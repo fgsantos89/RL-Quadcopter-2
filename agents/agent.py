@@ -49,13 +49,27 @@ class DDPG():
         self.gamma = 0.99  # discount factor
         self.tau = 0.01  # for soft update of target parameters
 
+        # Score tracking
+        self.best_score = -np.inf
+
     def reset_episode(self):
+        self.count = 0
+        self.total_reward = 0.0
         self.noise.reset()
         state = self.task.reset()
         self.last_state = state
         return state
 
     def step(self, action, reward, next_state, done):
+        # Score tracking
+        self.total_reward += reward
+        self.count += 1
+        if done:
+            self.score = self.total_reward / \
+                float(self.count) if self.count else 0.0
+            if self.score > self.best_score:
+                self.best_score = self.score
+
         # Save experience / reward
         self.memory.add(self.last_state, action, reward, next_state, done)
 
