@@ -1,4 +1,4 @@
-from keras import layers, models, optimizers
+from keras import layers, models, optimizers, regularizers
 from keras import backend as K
 
 
@@ -33,15 +33,24 @@ class Critic():
 
         # Add hidden layer(s) for state pathway
         net_states = layers.Dense(units=32,
-                                  activation='relu')(states)
+                                  activation='relu',
+                                  kernel_regularizer=regularizers.l2(0.001))(states)
+        net_states = layers.BatchNormalization()(net_states)
+
         net_states = layers.Dense(units=64,
-                                  activation='relu')(net_states)
+                                  activation='relu',
+                                  kernel_regularizer=regularizers.l2(0.001))(net_states)
+        net_states = layers.BatchNormalization()(net_states)
 
         # Add hidden layer(s) for action pathway
         net_actions = layers.Dense(units=32,
-                                   activation='relu')(actions)
+                                   activation='relu',
+                                   kernel_regularizer=regularizers.l2(0.001))(actions)
+        net_actions = layers.BatchNormalization()(net_actions)
         net_actions = layers.Dense(units=64,
-                                   activation='relu')(net_actions)
+                                   activation='relu',
+                                   kernel_regularizer=regularizers.l2(0.001))(actions)
+        net_actions = layers.BatchNormalization()(net_actions)
 
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.
