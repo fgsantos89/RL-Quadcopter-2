@@ -1,4 +1,4 @@
-from keras import layers, models, optimizers, regularizers
+from keras import layers, models, optimizers, regularizers, initializers
 from keras import backend as K
 
 
@@ -31,16 +31,25 @@ class Actor():
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # Add hidden layers
-        net = layers.Dense(units=32, activation='relu',
-                           kernel_regularizer=regularizers.l2(0.001))(states)
+        net = layers.Dense(units=640,
+                           activation='relu',
+                           kernel_regularizer=regularizers.l2(0.00001),
+                           kernel_initializer=initializers.lecun_uniform()
+                           )(states)
         net = layers.BatchNormalization()(net)
 
-        net = layers.Dense(units=64, activation='relu',
-                           kernel_regularizer=regularizers.l2(0.001))(net)
+        net = layers.Dense(units=1280,
+                           activation='relu',
+                           kernel_regularizer=regularizers.l2(0.00001),
+                           kernel_initializer=initializers.lecun_uniform()
+                           )(net)
         net = layers.BatchNormalization()(net)
 
-        net = layers.Dense(units=32, activation='relu',
-                           kernel_regularizer=regularizers.l2(0.001))(net)
+        net = layers.Dense(units=640,
+                           activation='relu',
+                           kernel_regularizer=regularizers.l2(0.00001),
+                           kernel_initializer=initializers.lecun_uniform()
+                           )(net)
         net = layers.BatchNormalization()(net)
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.
@@ -48,7 +57,8 @@ class Actor():
         # Add final output layer with sigmoid activation
         raw_actions = layers.Dense(units=self.action_size,
                                    activation='sigmoid',
-                                   name='raw_actions')(net)
+                                   name='raw_actions'
+                                   )(net)
 
         # Scale [0, 1] output for each action dimension to proper range
         actions = layers.Lambda(lambda x: (x * self.action_range) +

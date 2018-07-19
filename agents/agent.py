@@ -34,15 +34,15 @@ class DDPG():
             self.actor_local.model.get_weights())
 
         # Noise process
-        self.exploration_mu = 0.5
-        self.exploration_theta = 0.8
-        self.exploration_sigma = 0.9
+        self.exploration_mu = .25
+        self.exploration_theta = .25
+        self.exploration_sigma = .30
         self.noise = OUNoise(self.action_size, self.exploration_mu,
                              self.exploration_theta, self.exploration_sigma)
 
         # Replay memory
         self.buffer_size = 100000
-        self.batch_size = 128
+        self.batch_size = 64
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
 
         # Algorithm parameters

@@ -1,4 +1,4 @@
-from keras import layers, models, optimizers, regularizers
+from keras import layers, models, optimizers, regularizers, initializers
 from keras import backend as K
 
 
@@ -32,24 +32,33 @@ class Critic():
                                name='actions')
 
         # Add hidden layer(s) for state pathway
-        net_states = layers.Dense(units=32,
+        net_states = layers.Dense(units=640,
                                   activation='relu',
-                                  kernel_regularizer=regularizers.l2(0.001))(states)
+                                  kernel_regularizer=regularizers.l2(0.00001),
+                                  kernel_initializer=initializers.lecun_uniform()
+                                  )(states)
         net_states = layers.BatchNormalization()(net_states)
 
-        net_states = layers.Dense(units=64,
+        net_states = layers.Dense(units=1280,
                                   activation='relu',
-                                  kernel_regularizer=regularizers.l2(0.001))(net_states)
+                                  kernel_regularizer=regularizers.l2(0.00001),
+                                  kernel_initializer=initializers.lecun_uniform()
+                                  )(net_states)
         net_states = layers.BatchNormalization()(net_states)
 
         # Add hidden layer(s) for action pathway
-        net_actions = layers.Dense(units=32,
+        net_actions = layers.Dense(units=640,
                                    activation='relu',
-                                   kernel_regularizer=regularizers.l2(0.001))(actions)
+                                   kernel_regularizer=regularizers.l2(0.00001),
+                                   kernel_initializer=initializers.lecun_uniform()
+                                   )(actions)
         net_actions = layers.BatchNormalization()(net_actions)
-        net_actions = layers.Dense(units=64,
+
+        net_actions = layers.Dense(units=1280,
                                    activation='relu',
-                                   kernel_regularizer=regularizers.l2(0.001))(actions)
+                                   kernel_regularizer=regularizers.l2(0.00001),
+                                   kernel_initializer=initializers.lecun_uniform()
+                                   )(actions)
         net_actions = layers.BatchNormalization()(net_actions)
 
         # Try different layer sizes, activations, add batch normalization,
