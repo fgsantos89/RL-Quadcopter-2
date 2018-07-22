@@ -32,35 +32,55 @@ class Critic():
                                name='actions')
 
         # Add hidden layer(s) for state pathway
-        net_states = layers.Dense(units=640,
+        net_states = layers.Dense(units=256,
                                   activation='relu',
-                                  kernel_regularizer=regularizers.l2(0.00001),
+                                  kernel_regularizer=regularizers.l2(0.000001),
                                   kernel_initializer=initializers.lecun_uniform()
                                   )(states)
         net_states = layers.BatchNormalization()(net_states)
 
-        net_states = layers.Dense(units=1280,
+        net_states = layers.Dense(units=128,
                                   activation='relu',
-                                  kernel_regularizer=regularizers.l2(0.00001),
+                                  kernel_regularizer=regularizers.l2(0.000001),
+                                  kernel_initializer=initializers.lecun_uniform()
+                                  )(net_states)
+        net_states = layers.BatchNormalization()(net_states)
+
+        net_states = layers.Dense(units=64,
+                                  activation='relu',
+                                  kernel_regularizer=regularizers.l2(0.000001),
+                                  kernel_initializer=initializers.lecun_uniform()
+                                  )(states)
+        net_states = layers.BatchNormalization()(net_states)
+
+        net_states = layers.Dense(units=32,
+                                  activation='relu',
+                                  kernel_regularizer=regularizers.l2(0.000001),
                                   kernel_initializer=initializers.lecun_uniform()
                                   )(net_states)
         net_states = layers.BatchNormalization()(net_states)
 
         # Add hidden layer(s) for action pathway
-        net_actions = layers.Dense(units=640,
+        net_actions = layers.Dense(units=128,
                                    activation='relu',
-                                   kernel_regularizer=regularizers.l2(0.00001),
+                                   kernel_regularizer=regularizers.l2(0.000001),
                                    kernel_initializer=initializers.lecun_uniform()
                                    )(actions)
         net_actions = layers.BatchNormalization()(net_actions)
 
-        net_actions = layers.Dense(units=1280,
-                                   activation='relu',
-                                   kernel_regularizer=regularizers.l2(0.00001),
+        net_actions = layers.Dense(units=64,
+                                   activation='sigmoid',
+                                   kernel_regularizer=regularizers.l2(0.000001),
                                    kernel_initializer=initializers.lecun_uniform()
-                                   )(actions)
+                                   )(net_actions)
         net_actions = layers.BatchNormalization()(net_actions)
 
+        net_actions = layers.Dense(units=32,
+                                   activation='sigmoid',
+                                   kernel_regularizer=regularizers.l2(0.000001),
+                                   kernel_initializer=initializers.lecun_uniform()
+                                   )(net_actions)
+        net_actions = layers.BatchNormalization()(net_actions)
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.
 
@@ -69,6 +89,21 @@ class Critic():
         net = layers.Activation('relu')(net)
 
         # Add more layers to the combined network if needed
+
+        net = layers.Dense(units=32,
+                           activation='relu',
+                           kernel_regularizer=regularizers.l2(0.000001),
+                           kernel_initializer=initializers.lecun_uniform()
+                           )(actions)
+        net = layers.BatchNormalization()(net)
+
+        net = layers.Dense(units=16                                                      ,
+                           activation='relu',
+                           kernel_regularizer=regularizers.l2(0.000001),
+                           kernel_initializer=initializers.lecun_uniform()
+                           )(actions)
+        net = layers.BatchNormalization()(net)
+
 
         # Add final output layer to prduce action values (Q values)
         Q_values = layers.Dense(units=1, name='q_values')(net)

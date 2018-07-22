@@ -31,23 +31,23 @@ class Actor():
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # Add hidden layers
-        net = layers.Dense(units=640,
+        net = layers.Dense(units=300,
                            activation='relu',
-                           kernel_regularizer=regularizers.l2(0.00001),
+                           kernel_regularizer=regularizers.l2(0.000001),
                            kernel_initializer=initializers.lecun_uniform()
                            )(states)
         net = layers.BatchNormalization()(net)
 
-        net = layers.Dense(units=1280,
+        net = layers.Dense(units=200,
                            activation='relu',
-                           kernel_regularizer=regularizers.l2(0.00001),
+                           kernel_regularizer=regularizers.l2(0.000001),
                            kernel_initializer=initializers.lecun_uniform()
                            )(net)
         net = layers.BatchNormalization()(net)
 
-        net = layers.Dense(units=640,
+        net = layers.Dense(units=100,
                            activation='relu',
-                           kernel_regularizer=regularizers.l2(0.00001),
+                           kernel_regularizer=regularizers.l2(0.000001),
                            kernel_initializer=initializers.lecun_uniform()
                            )(net)
         net = layers.BatchNormalization()(net)
@@ -59,10 +59,12 @@ class Actor():
                                    activation='sigmoid',
                                    name='raw_actions'
                                    )(net)
+        raw_actions = layers.BatchNormalization()(raw_actions)
 
         # Scale [0, 1] output for each action dimension to proper range
         actions = layers.Lambda(lambda x: (x * self.action_range) +
                                 self.action_low, name='actions')(raw_actions)
+        actions = layers.BatchNormalization()(actions)
 
         # Create Keras model
         self.model = models.Model(inputs=states, outputs=actions)
