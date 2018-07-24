@@ -1,8 +1,8 @@
-from keras import layers, models, optimizers, regularizers, initializers
+from keras import layers, models, optimizers
 from keras import backend as K
 
 
-class Actor():
+class Actor:
     """Actor (Policy) Model."""
 
     def __init__(self, state_size, action_size, action_low, action_high):
@@ -31,40 +31,22 @@ class Actor():
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # Add hidden layers
-        net = layers.Dense(units=300,
-                           activation='relu',
-                           kernel_regularizer=regularizers.l2(0.000001),
-                           kernel_initializer=initializers.lecun_uniform()
-                           )(states)
-        net = layers.BatchNormalization()(net)
+        net = layers.Dense(units=150, activation='relu')(states)
+        net = layers.Dense(units=300, activation='relu')(net)
+        net = layers.Dense(units=150, activation='relu')(net)
 
-        net = layers.Dense(units=200,
-                           activation='relu',
-                           kernel_regularizer=regularizers.l2(0.000001),
-                           kernel_initializer=initializers.lecun_uniform()
-                           )(net)
-        net = layers.BatchNormalization()(net)
-
-        net = layers.Dense(units=100,
-                           activation='relu',
-                           kernel_regularizer=regularizers.l2(0.000001),
-                           kernel_initializer=initializers.lecun_uniform()
-                           )(net)
-        net = layers.BatchNormalization()(net)
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.
 
         # Add final output layer with sigmoid activation
         raw_actions = layers.Dense(units=self.action_size,
                                    activation='sigmoid',
-                                   name='raw_actions'
-                                   )(net)
-        raw_actions = layers.BatchNormalization()(raw_actions)
+                                   name='raw_actions')(net)
 
         # Scale [0, 1] output for each action dimension to proper range
-        actions = layers.Lambda(lambda x: (x * self.action_range) +
-                                self.action_low, name='actions')(raw_actions)
-        actions = layers.BatchNormalization()(actions)
+        actions = layers.Lambda(lambda x: ((x * self.action_range) +
+                                           self.action_low),
+                                name='actions')(raw_actions)
 
         # Create Keras model
         self.model = models.Model(inputs=states, outputs=actions)

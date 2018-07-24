@@ -36,13 +36,13 @@ class DDPG():
         # Noise process
         self.exploration_mu = 0.0
         self.exploration_theta = 0.15
-        self.exploration_sigma = 0.2
+        self.exploration_sigma = 0.3
         self.noise = OUNoise(self.action_size, self.exploration_mu,
                              self.exploration_theta, self.exploration_sigma)
 
         # Replay memory
         self.buffer_size = 100000
-        self.batch_size = 100000
+        self.batch_size = 64
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
 
         # Algorithm parameters
@@ -53,8 +53,10 @@ class DDPG():
         self.best_score = -np.inf
 
     def reset_episode(self):
+        # score tracking
         self.count = 0
         self.total_reward = 0.0
+
         self.noise.reset()
         state = self.task.reset()
         self.last_state = state
@@ -67,8 +69,7 @@ class DDPG():
         if done:
             self.score = self.total_reward / \
                 float(self.count) if self.count else 0.0
-            if self.score > self.best_score:
-                self.best_score = self.score
+            self.best_score = max(self.score, self.best_score)
 
         # Save experience / reward
         self.memory.add(self.last_state, action, reward, next_state, done)
@@ -90,24 +91,24 @@ class DDPG():
 
     def learn(self, experiences):
         """
-        Update policy and value parameters using given batch of experience
-        tuples.
+            Update policy and value parameters using given batch
+            of experience tuples.
         """
         # Convert experience tuples to separate arrays for each element
         # (states, actions, rewards, etc.)
         states = np.vstack([e.state for e in experiences if e is not None])
-        actions = np.array([e.action for e in experiences if e is not None]) \
+        actions = np.array([e.action for e in experiences if e is not None])\
             .astype(np.float32).reshape(-1, self.action_size)
-        rewards = np.array([e.reward for e in experiences if e is not None]) \
+        rewards = np.array([e.reward for e in experiences if e is not None])\
             .astype(np.float32).reshape(-1, 1)
-        dones = np.array([e.done for e in experiences if e is not None]) \
+        dones = np.array([e.done for e in experiences if e is not None])\
             .astype(np.uint8).reshape(-1, 1)
         next_states = np.vstack(
             [e.next_state for e in experiences if e is not None])
 
         # Get predicted next-state actions and Q values from target models
         #     Q_targets_next = critic_target(next_state,
-        #       actor_target(next_state))
+        #                       actor_target(next_state))
         actions_next = self.actor_target.model.predict_on_batch(next_states)
         Q_targets_next = self.critic_target.model.predict_on_batch(
             [next_states, actions_next])
@@ -118,10 +119,8 @@ class DDPG():
             x=[states, actions], y=Q_targets)
 
         # Train actor model (local)
-        action_gradients_critic = self.critic_local.get_action_gradients(
-            [states, actions, 0])
-        action_gradients = np.reshape(action_gradients_critic,
-                                      (-1, self.action_size))
+        action_gradients = np.reshape(self.critic_local.get_action_gradients(
+            [states, actions, 0]), (-1, self.action_size))
         # custom training function
         self.actor_local.train_fn([states, action_gradients, 1])
 
@@ -134,8 +133,8 @@ class DDPG():
         local_weights = np.array(local_model.get_weights())
         target_weights = np.array(target_model.get_weights())
 
-        assert len(local_weights) == len(target_weights),\
-            "Local and target model parameters must have the same size"
+        assert len(local_weights) == len(
+            target_weights), "Local and target model parameters must have the same size"
 
         new_weights = self.tau * local_weights + \
             (1 - self.tau) * target_weights

@@ -40,3 +40,14 @@ Running on docker with keras with tensorflow-cpu on backend
 ```
 docker run --rm -p 8888:8888 -v "$PWD":/home/jovyan/work --name notebook jupyter/tensorflow-notebook
 ```
+
+## TODO
+
+[X] review udacity code
+[ ] change the reward function
+[ ] change the quantity of neurons on layers
+[ ] change the regularization
+[ ] change the gamma factor
+[ ] change the tau factor
+[ ] add batch normalization
+[ ] change the activation on neurons
