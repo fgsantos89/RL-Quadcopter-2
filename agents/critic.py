@@ -1,4 +1,4 @@
-from keras import layers, models, optimizers
+from keras import layers, models, optimizers, regularizers
 from keras import backend as K
 
 
@@ -30,12 +30,30 @@ class Critic:
         actions = layers.Input(shape=(self.action_size,), name='actions')
 
         # Add hidden layer(s) for state pathway
-        net_states = layers.Dense(units=150, activation='relu')(states)
-        net_states = layers.Dense(units=300, activation='relu')(net_states)
+        net_states = layers.Dense(units=150, 
+                                    activation='relu',
+                                    kernel_regularizer=regularizers.l2(0.01),
+                                    activity_regularizer=regularizers.l1(0.01))(states)
+        net_states = layers.BatchNormalization()(net_states)
+
+        net_states = layers.Dense(units=300, 
+                                    activation='relu',
+                                    kernel_regularizer=regularizers.l2(0.01),
+                                    activity_regularizer=regularizers.l1(0.01))(net_states)
+        net_states = layers.BatchNormalization()(net_states)
 
         # Add hidden layer(s) for action pathway
-        net_actions = layers.Dense(units=150, activation='relu')(actions)
-        net_actions = layers.Dense(units=300, activation='relu')(net_actions)
+        net_actions = layers.Dense(units=150, 
+                                    activation='relu',
+                                    kernel_regularizer=regularizers.l2(0.01),
+                                    activity_regularizer=regularizers.l1(0.01))(actions)
+        net_actions = layers.BatchNormalization()(net_actions)
+
+        net_actions = layers.Dense(units=300, 
+                                    activation='relu',
+                                    kernel_regularizer=regularizers.l2(0.01),
+                                    activity_regularizer=regularizers.l1(0.01))(net_actions)
+        net_actions = layers.BatchNormalization()(net_actions)
 
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.
@@ -54,7 +72,7 @@ class Critic:
 
         # Define optimizer and compile model for training with
         # built-in loss function
-        optimizer = optimizers.Adam()
+        optimizer = optimizers.Adam(lr=0.01)
         self.model.compile(optimizer=optimizer, loss='mse')
 
         # Compute action gradients (derivative of Q values w.r.t. to actions)

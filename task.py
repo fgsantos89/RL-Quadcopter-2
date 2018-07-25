@@ -38,11 +38,20 @@ class Task():
 
     def get_reward(self):
         """Uses current pose of sim to return reward."""
-        reward = 1.\
-            - 0.3 * np.sqrt(np.sum((self.sim.pose[:3] - self.target_pos)**2))\
-            - .01 * (self.sim.pose[3:] ** 2).sum()
+        # recompensa pela velocidade do eixo para a decolagem
+        # penalizar pela instabilidade dos angulos
+        # penalizar pela distancia do eixos
+        # penalizar pela velocidades dos outros eixos
+        # recompensa por chegar mais perto do target
+        # recompensa constante para se manter dentro do quadrante válido
+        reward = .02 * self.sim.v[2]\
+            - .01 * abs(self.sim.pose[3:]).sum()\
+            - .05 * np.sum((self.sim.pose[0:2] - self.target_pos[0:2])**2)\
+            - .1 * np.sum(self.sim.v[:2])\
+            + (self.target_pos[2] - self.sim.pose[2])\
+            + 1
         # - .2 * abs(self.sim.pose[2] - self.target_pos[2])\
-        # - .1 * (abs(self.sim.pose[:3] - self.target_pos)).sum()\
+        # - .3 * (abs(self.sim.pose[:3] - self.target_pos)).sum()\
         return reward
 
     def step(self, rotor_speeds):
