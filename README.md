@@ -44,6 +44,8 @@ docker run --rm -p 8888:8888 -v "$PWD":/home/jovyan/work --name notebook jupyter
 ## TODO
 
 [X] review udacity code
+[ ] add more visualization to training/testing
+[ ] automate the training/testing to keep the results
 [ ] change the reward function
 [ ] change the quantity of neurons on layers
 [ ] change the regularization
