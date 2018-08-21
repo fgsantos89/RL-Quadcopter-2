@@ -1,4 +1,7 @@
 import sys
+import time
+import os
+import json
 
 LABELS = ['time',
           'x', 'y', 'z',
@@ -8,16 +11,45 @@ LABELS = ['time',
           'rotor_speed1', 'rotor_speed2', 'rotor_speed3', 'rotor_speed4']
 
 
+def save(agent, training_plot, testing_plot):
+    timestamp = str(time.time())
+
+    cur_dir = os.getcwd()
+    results_dir_path = cur_dir + '/results'
+
+    if not os.path.isdir(results_dir_path):
+        os.mkdir(results_dir_path)
+
+    result_dir_path = results_dir_path + '/' + timestamp
+    if not os.path.isdir(result_dir_path):
+        os.mkdir(result_dir_path)
+
+    training_plot.savefig(result_dir_path + '/' + 'training.png')
+    testing_plot.savefig(result_dir_path + '/' + 'testing.png')
+
+    json_agent = agent_to_dict(agent)
+    with open(result_dir_path + '/' + 'agent.json', "w") as agent_file:
+        json.dump(json_agent, agent_file, indent=4, sort_keys=True)
+
+
+def agent_to_dict(agent):
+    return {
+        'alpha': agent.alpha,
+        'gamma': agent.gamma,
+        'best_score': agent.best_score,
+    }
+
+
 def testing(agent, num_episodes):
-    return run_agent(agent, num_episodes, False)
+    return run_env(agent, num_episodes, False)
 
 
 def training(agent, num_episodes):
-    return run_agent(agent, num_episodes, True)
+    return run_env(agent, num_episodes, True)
 
 
-def run_agent(agent, num_episodes, training):
-    memory_dict = create_memory_dict()
+def run_env(agent, num_episodes, training):
+    memory_dict = {'episode': [], 'reward': [], 'runs': []}
     done = False
     task = agent.task
     for i_episode in range(num_episodes):
@@ -45,7 +77,3 @@ def run_agent(agent, num_episodes, training):
                 break
 
     return memory_dict
-
-
-def create_memory_dict():
-    return {'episode': [], 'reward': [], 'runs': []}
