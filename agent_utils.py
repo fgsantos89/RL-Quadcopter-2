@@ -1,7 +1,8 @@
 import sys
-import time
+import datetime
 import os
 import json
+import inspect
 
 LABELS = ['time',
           'x', 'y', 'z',
@@ -12,7 +13,7 @@ LABELS = ['time',
 
 
 def save(agent, training_plot, testing_plot):
-    timestamp = str(time.time())
+    timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
     cur_dir = os.getcwd()
     results_dir_path = cur_dir + '/results'
@@ -28,15 +29,34 @@ def save(agent, training_plot, testing_plot):
     testing_plot.savefig(result_dir_path + '/' + 'testing.png')
 
     json_agent = agent_to_dict(agent)
-    with open(result_dir_path + '/' + 'agent.json', "w") as agent_file:
+    with open(result_dir_path + '/' + 'agent_params.json', "w") as agent_file:
         json.dump(json_agent, agent_file, indent=4, sort_keys=True)
+
+    with open(result_dir_path + '/' + 'model_summary.txt', "w") as model_file:
+        model_file.write('ACTOR LOCAL:\n')
+        model_file.write('============\n')
+        agent.actor_local.model.summary(
+            print_fn=lambda x: model_file.write(x + '\n'))
+
+        model_file.write('\n\nCRITIC LOCAL:\n')
+        model_file.write('=============\n')
+        agent.critic_local.model.summary(
+            print_fn=lambda x: model_file.write(x + '\n'))
 
 
 def agent_to_dict(agent):
     return {
-        'alpha': agent.alpha,
+        'tau': agent.tau,
         'gamma': agent.gamma,
         'best_score': agent.best_score,
+        'noise': {
+            'exploration_mu': agent.exploration_mu,
+            'exploration_theta': agent.exploration_theta,
+            'exploration_sigma': agent.exploration_sigma
+        },
+        'batch_size': agent.batch_size,
+        'buffer_size': agent.buffer_size,
+        'reward_function': inspect.getsource(agent.task.get_reward)
     }
 
 
