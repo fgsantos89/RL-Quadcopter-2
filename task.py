@@ -41,19 +41,21 @@ class Task():
         # 1 - .3 * (abs(self.sim.pose[:3] - self.target_pos)).sum()
 
         # recompensa pela velocidade do eixo para a decolagem
-        reward = self.sim.v[2]
+        reward = 0.01 * self.sim.v[2]
 
-        # recompensa constante para se manter dentro do quadrante v?ido
-        reward += 10
+        # recompensa constante para se manter dentro do quadrante válido
+        reward += 1.
 
         # penalizar pela instabilidade dos angulos
-        reward -= abs(self.sim.pose[3:]).sum()
+        reward -= 0.01 * abs(self.sim.pose[3:]).sum()
 
         # penalizar pela distancia do eixos x, y, z do target
-        reward -= np.sum(abs(self.sim.pose[:3] - self.target_pos[:3]))
+        reward -= 0.1 * pow(self.sim.pose[2] - self.target_pos[2], 2)
+
+        reward -= 0.1 * np.sum(abs(self.sim.pose[:2] - self.target_pos[:2]))
 
         # penalizar pela velocidades dos outros eixos
-        reward -= np.sum(abs(self.sim.v[:2]))
+        reward -= 0.01 * np.sum(abs(self.sim.v[:2]))
 
         return reward
 
