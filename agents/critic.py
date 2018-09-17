@@ -30,34 +30,34 @@ class Critic:
         actions = layers.Input(shape=(self.action_size,), name='actions')
 
         # Add hidden layer(s) for state pathway
-        net_states = layers.Dense(units=32,
-                                  activation='relu',
-                                  kernel_regularizer=regularizers.l2(0.0001),
-                                  activity_regularizer=regularizers.l1(0.01))(states)
-        net_states = layers.BatchNormalization()(net_states)
-        net_states = layers.Dropout(rate=0.5)(net_states)
-
         net_states = layers.Dense(units=64,
-                                  activation='relu',
-                                  kernel_regularizer=regularizers.l2(0.0001),
-                                  activity_regularizer=regularizers.l1(0.01))(net_states)
-        net_states = layers.BatchNormalization()(net_states)
-        net_states = layers.Dropout(rate=0.5)(net_states)
+                                  activation='relu')(states)
+        # kernel_regularizer=regularizers.l2(0.000001)
+        # activity_regularizer=regularizers.l1(0.01))(states)
+        # net_states = layers.BatchNormalization()(net_states)
+        # net_states = layers.Dropout(rate=0.5)(net_states)
+
+        net_states = layers.Dense(units=128,
+                                  activation='relu')(net_states)
+        # kernel_regularizer=regularizers.l2(0.000001)
+        # activity_regularizer=regularizers.l1(0.01))(net_states)
+        # net_states = layers.BatchNormalization()(net_states)
+        # net_states = layers.Dropout(rate=0.5)(net_states)
 
         # Add hidden layer(s) for action pathway
-        net_actions = layers.Dense(units=32,
-                                   activation='relu',
-                                   kernel_regularizer=regularizers.l2(0.0001),
-                                   activity_regularizer=regularizers.l1(0.01))(actions)
-        net_actions = layers.BatchNormalization()(net_actions)
-        net_actions = layers.Dropout(rate=0.5)(net_actions)
-
         net_actions = layers.Dense(units=64,
-                                   activation='relu',
-                                   kernel_regularizer=regularizers.l2(0.0001),
-                                   activity_regularizer=regularizers.l1(0.01))(net_actions)
-        net_actions = layers.BatchNormalization()(net_actions)
-        net_actions = layers.Dropout(rate=0.5)(net_actions)
+                                   activation='relu')(actions)
+        # kernel_regularizer=regularizers.l2(0.000001)
+        # activity_regularizer=regularizers.l1(0.01))(actions)
+        # net_actions = layers.BatchNormalization()(net_actions)
+        # net_actions = layers.Dropout(rate=0.5)(net_actions)
+
+        net_actions = layers.Dense(units=128,
+                                   activation='relu')(net_actions)
+        # kernel_regularizer=regularizers.l2(0.000001)
+        # activity_regularizer=regularizers.l1(0.01))(net_actions)
+        # net_actions = layers.BatchNormalization()(net_actions)
+        # net_actions = layers.Dropout(rate=0.5)(net_actions)
 
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.

@@ -40,22 +40,26 @@ class Task():
         """Uses current pose of sim to return reward."""
         # 1 - .3 * (abs(self.sim.pose[:3] - self.target_pos)).sum()
 
-        # recompensa pela velocidade do eixo para a decolagem
-        reward = 0.01 * self.sim.v[2]
+        # tenho que pensar numa reward que seja mais genérica
+        # não somente para decolagem
 
         # recompensa constante para se manter dentro do quadrante válido
-        reward += 1.
+        reward = 1.
+
+        # penalizar pela posicao
+        # penalizar pela distancia do eixos x, y, z do target
+        # distancia maxima é 300 m em cada direção
+        distance = self.sim.pose[:3] - self.target_pos[:3]
+        log_transform = np.tan(np.power(distance, 2))
+        reward -= 0.3 * log_transform.sum()
+
+        # recompensa pela velocidade do eixo
+        # (-15, 15) m/s
+        # reward += 0.01 * abs(self.sim.v[:3]).sum()
 
         # penalizar pela instabilidade dos angulos
-        reward -= 0.01 * abs(self.sim.pose[3:]).sum()
-
-        # penalizar pela distancia do eixos x, y, z do target
-        reward -= 0.1 * pow(self.sim.pose[2] - self.target_pos[2], 2)
-
-        reward -= 0.1 * np.sum(abs(self.sim.pose[:2] - self.target_pos[:2]))
-
-        # penalizar pela velocidades dos outros eixos
-        reward -= 0.01 * np.sum(abs(self.sim.v[:2]))
+        # (0, 6)
+        # reward -= 0.01 * abs(self.sim.pose[3:]).sum()
 
         return reward
 
