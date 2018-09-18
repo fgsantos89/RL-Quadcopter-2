@@ -44,22 +44,23 @@ class Task():
         # não somente para decolagem
 
         # recompensa constante para se manter dentro do quadrante válido
-        reward = 1.
+        reward = 3.
 
         # penalizar pela posicao
         # penalizar pela distancia do eixos x, y, z do target
         # distancia maxima é 300 m em cada direção
-        distance = self.sim.pose[:3] - self.target_pos[:3]
-        log_transform = np.tan(np.power(distance, 2))
-        reward -= 0.3 * log_transform.sum()
+        reward -= .4 * (abs(self.sim.pose[:3] - self.target_pos)).sum()
 
         # recompensa pela velocidade do eixo
         # (-15, 15) m/s
-        # reward += 0.01 * abs(self.sim.v[:3]).sum()
+        reward += 0.05 * abs(self.sim.v).sum()
 
         # penalizar pela instabilidade dos angulos
         # (0, 6)
-        # reward -= 0.01 * abs(self.sim.pose[3:]).sum()
+        reward -= 0.05 * abs(self.sim.pose).sum()
+
+        # punir um pouco pela velocidade angular
+        reward -= 0.2 * abs(self.sim.angular_v).sum()
 
         return reward
 

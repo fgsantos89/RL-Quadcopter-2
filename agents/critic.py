@@ -35,14 +35,14 @@ class Critic:
         # kernel_regularizer=regularizers.l2(0.000001)
         # activity_regularizer=regularizers.l1(0.01))(states)
         # net_states = layers.BatchNormalization()(net_states)
-        # net_states = layers.Dropout(rate=0.5)(net_states)
+        net_states = layers.Dropout(rate=0.2)(net_states)
 
         net_states = layers.Dense(units=128,
                                   activation='relu')(net_states)
         # kernel_regularizer=regularizers.l2(0.000001)
         # activity_regularizer=regularizers.l1(0.01))(net_states)
         # net_states = layers.BatchNormalization()(net_states)
-        # net_states = layers.Dropout(rate=0.5)(net_states)
+        net_states = layers.Dropout(rate=0.2)(net_states)
 
         # Add hidden layer(s) for action pathway
         net_actions = layers.Dense(units=64,
@@ -50,14 +50,14 @@ class Critic:
         # kernel_regularizer=regularizers.l2(0.000001)
         # activity_regularizer=regularizers.l1(0.01))(actions)
         # net_actions = layers.BatchNormalization()(net_actions)
-        # net_actions = layers.Dropout(rate=0.5)(net_actions)
+        net_actions = layers.Dropout(rate=0.2)(net_actions)
 
         net_actions = layers.Dense(units=128,
                                    activation='relu')(net_actions)
         # kernel_regularizer=regularizers.l2(0.000001)
         # activity_regularizer=regularizers.l1(0.01))(net_actions)
         # net_actions = layers.BatchNormalization()(net_actions)
-        # net_actions = layers.Dropout(rate=0.5)(net_actions)
+        net_actions = layers.Dropout(rate=0.2)(net_actions)
 
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.
@@ -77,7 +77,7 @@ class Critic:
         # Define optimizer and compile model for training with
         # built-in loss function
         optimizer = optimizers.Adam(lr=0.01)
-        self.model.compile(optimizer=optimizer, loss='mse')
+        self.model.compile(optimizer=optimizer, loss='cosine_proximity')
 
         # Compute action gradients (derivative of Q values w.r.t. to actions)
         action_gradients = K.gradients(Q_values, actions)

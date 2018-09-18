@@ -36,21 +36,21 @@ class Actor:
         # kernel_regularizer=regularizers.l2(0.0001)
         # activity_regularizer=regularizers.l1(0.01))(states)
         # net = layers.BatchNormalization()(net)
-        # net = layers.Dropout(rate=0.5)(net)
+        net = layers.Dropout(rate=0.2)(net)
 
         net = layers.Dense(units=128,
                            activation='relu')(net)
         # kernel_regularizer=regularizers.l2(0.0001)
         # activity_regularizer=regularizers.l1(0.01))(net)
         # net = layers.BatchNormalization()(net)
-        # net = layers.Dropout(rate=0.5)(net)
+        net = layers.Dropout(rate=0.2)(net)
 
         net = layers.Dense(units=64,
                            activation='relu')(net)
         # kernel_regularizer=regularizers.l2(0.0001)
         # activity_regularizer=regularizers.l1(0.01))(net)
         # net = layers.BatchNormalization()(net)
-        # net = layers.Dropout(rate=0.5)(net)
+        net = layers.Dropout(rate=0.2)(net)
 
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.
@@ -62,7 +62,7 @@ class Actor:
         # kernel_regularizer=regularizers.l2(0.0001),
         # activity_regularizer=regularizers.l1(0.01),
         # net = layers.BatchNormalization()(raw_actions)
-        # net = layers.Dropout(rate=0.5)(net)
+        net = layers.Dropout(rate=0.2)(net)
 
         # Scale [0, 1] output for each action dimension to proper range
         actions = layers.Lambda(lambda x: ((x * self.action_range) +
