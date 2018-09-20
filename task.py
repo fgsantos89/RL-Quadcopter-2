@@ -37,30 +37,26 @@ class Task():
             [0., 0., 10.])
 
     def get_reward(self):
-        """Uses current pose of sim to return reward."""
-        # 1 - .3 * (abs(self.sim.pose[:3] - self.target_pos)).sum()
+        """
+            Uses current pose of sim to return reward.
+        """
+        # initialize a reward based on z-axis distance difference
+        # between current and target position
+        reward = self.target_pos[2] - self.sim.pose[2]
 
-        # tenho que pensar numa reward que seja mais genérica
-        # não somente para decolagem
+        # z-axis velocity in to encourage quadcopter to fly towards the target
+        reward += self.sim.v[2]
 
-        # recompensa constante para se manter dentro do quadrante válido
-        reward = 3.
+        # penalty angular velocity to make sure quadcopter flies straight up
+        reward -= abs(self.sim.angular_v).sum()
 
-        # penalizar pela posicao
-        # penalizar pela distancia do eixos x, y, z do target
-        # distancia maxima é 300 m em cada direção
-        reward -= .4 * (abs(self.sim.pose[:3] - self.target_pos)).sum()
+        # subtract the sum of x and y-axis to make goes straight up
+        reward -= abs(self.target_pos[:2] - self.sim.pose[:2]).sum()
 
-        # recompensa pela velocidade do eixo
-        # (-15, 15) m/s
-        reward += 0.05 * abs(self.sim.v).sum()
+        # include some large bonus and penalty rewards also.
+        # a bonus on achieving the target height and a penalty on crashing.
 
-        # penalizar pela instabilidade dos angulos
-        # (0, 6)
-        reward -= 0.05 * abs(self.sim.pose).sum()
-
-        # punir um pouco pela velocidade angular
-        reward -= 0.2 * abs(self.sim.angular_v).sum()
+        # clip your final reward between (-1, 1).
 
         return reward
 

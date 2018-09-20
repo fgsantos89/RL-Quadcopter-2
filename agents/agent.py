@@ -34,11 +34,14 @@ class DDPG():
             self.actor_local.model.get_weights())
 
         # Noise process
-        self.exploration_mu = 0.0
-        self.exploration_theta = 0.15
-        self.exploration_sigma = 0.3
+        self.exploration_mu = 1.0
+        self.exploration_theta = 2.15
+        self.exploration_sigma = 3.0
         self.noise = OUNoise(self.action_size, self.exploration_mu,
                              self.exploration_theta, self.exploration_sigma)
+        # Exploration parameters are very important for a good learning.
+        # So right tuning of these parameters is important.
+        # https://medium.com/emergent-future/simple-reinforcement-learning-with-tensorflow-part-7-action-selection-strategies-for-exploration-d3a97b7cceaf
 
         # Replay memory
         self.buffer_size = 100000
@@ -46,8 +49,10 @@ class DDPG():
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
 
         # Algorithm parameters
-        self.gamma = 0.95  # discount factor
-        self.tau = 0.01  # for soft update of target parameters
+        self.gamma = 0.99  # discount factor
+        self.tau = 0.005  # for soft update of target parameters
+        # Try tuning these parameters. Such as gamma between (0.95 - 0.99)
+        # and tau around (0.001 - 0.01) and compare the performance.
 
         # Score tracking
         self.best_score = -np.inf
