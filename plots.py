@@ -1,4 +1,29 @@
 import matplotlib.pyplot as plt
+import numpy as np
+
+
+def print_rewards(rewards):
+    total_start = np.sum([x['start'] for x in rewards])
+    total_distance_z = np.sum([x['distance_z'] for x in rewards])
+    total_z_axis_valocity = np.sum([x['z_axis_valocity'] for x in rewards])
+    total_angular_velocity_sum = np.sum(
+        [x['angular_velocity_sum'] for x in rewards])
+    total_distance_x_y_sum = np.sum([x['distance_x_y_sum'] for x in rewards])
+    total_height = np.sum(
+        [x['height'] if 'height' in x else 0 for x in rewards])
+    total_crash = np.sum([x['crash'] if 'crash' in x else 0 for x in rewards])
+    total_total = np.sum([x['total'] for x in rewards])
+
+    print('total_start={0:.2f}'.format(total_start / total_total))
+    print('total_distance_z={0:.2f}'.format(total_distance_z / total_total))
+    print('total_z_axis_valocity={0:.2f}'.format(
+        total_z_axis_valocity / total_total))
+    print('total_angular_velocity_sum={0:.2f}'.format(
+        total_angular_velocity_sum / total_total))
+    print('total_distance_x_y_sum={0:.2f}'.format(
+        total_distance_x_y_sum / total_total))
+    print('total_height={0:.2f}'.format(total_height / total_total))
+    print('total_crash={0:.2f}'.format(total_crash / total_total))
 
 
 def plot_results(results, alpha=0.1):
@@ -80,7 +105,6 @@ def velocity_angles_results(results, plot, alpha):
 def agent_choices_results(results, plot, alpha):
     plot.set_title("Choices", fontsize=18)
     for run in results['runs']:
-        plot.plot(run['time'], run['z'], alpha=alpha, color='red')
         # label='Rotor 1 revolutions / second'
         plot.plot(run['time'], run['rotor_speed1'],
                   alpha=alpha, color='red')
