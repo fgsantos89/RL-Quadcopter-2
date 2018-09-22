@@ -42,22 +42,22 @@ class Task():
         """
         # initialize a reward based on z-axis distance difference
         # between current and target position
-        # (-10, 0)
-        distance_z = abs(self.sim.pose[2] - self.target_pos[2])
-        reward = - distance_z
+        # (-10, 0) -> (-1, 1)
+        distance_z = self.sim.pose[2] - self.target_pos[2]
+        reward = distance_z
 
         # z-axis velocity in to encourage quadcopter to fly towards the target
-        reward += 0.15 * self.sim.v[2]
+        reward += 2.5 * self.sim.v[2]
 
         # penalty angular velocity to make sure quadcopter flies straight up
-        reward -= 0.1 * abs(self.sim.angular_v).sum()
+        reward -= abs(self.sim.angular_v).sum()
 
         # subtract the sum of x and y-axis to make goes straight up
-        reward -= 0.5 * abs(self.target_pos[:2] - self.sim.pose[:2]).sum()
+        reward -= abs(self.target_pos[:2] - self.sim.pose[:2]).sum()
 
         # include some large bonus and penalty rewards also.
         # a bonus on achieving the target height and a penalty on crashing.
-        if distance_z <= 0.01:
+        if abs(distance_z) <= 0.1:
             reward += 100
 
         if self.sim.done and self.sim.time < self.sim.runtime:

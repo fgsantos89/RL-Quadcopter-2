@@ -35,8 +35,8 @@ class DDPG():
 
         # Noise process
         self.exploration_mu = 0
-        self.exploration_theta = .15
-        self.exploration_sigma = .45
+        self.exploration_theta = 1.15
+        self.exploration_sigma = 1.45
         self.noise = OUNoise(self.action_size, self.exploration_mu,
                              self.exploration_theta, self.exploration_sigma)
         # Exploration parameters are very important for a good learning.
