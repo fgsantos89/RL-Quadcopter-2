@@ -3,27 +3,44 @@ import numpy as np
 
 
 def print_rewards(rewards):
-    total_start = np.sum([x['start'] for x in rewards])
-    total_distance_z = np.sum([x['distance_z'] for x in rewards])
-    total_z_axis_valocity = np.sum([x['z_axis_valocity'] for x in rewards])
-    total_angular_velocity_sum = np.sum(
-        [x['angular_velocity_sum'] for x in rewards])
-    total_distance_x_y_sum = np.sum([x['distance_x_y_sum'] for x in rewards])
-    total_height = np.sum(
-        [x['height'] if 'height' in x else 0 for x in rewards])
-    total_crash = np.sum([x['crash'] if 'crash' in x else 0 for x in rewards])
-    total_total = np.sum([x['total'] for x in rewards])
+    list_distance_z = [x['distance_z'] for x in rewards]
+    list_z_axis_valocity = [x['z_axis_velocity'] for x in rewards]
+    list_angular_velocity = [x['angular_velocity_sum'] for x in rewards]
+    list_distance_x_y = [x['distance_x_y_sum'] for x in rewards]
+    list_height = [x['height'] if 'height' in x else 0 for x in rewards]
+    list_crash = [x['crash'] if 'crash' in x else 0 for x in rewards]
 
-    print('total_start={0:.2f}'.format(total_start / total_total))
-    print('total_distance_z={0:.2f}'.format(total_distance_z / total_total))
-    print('total_z_axis_valocity={0:.2f}'.format(
-        total_z_axis_valocity / total_total))
-    print('total_angular_velocity_sum={0:.2f}'.format(
-        total_angular_velocity_sum / total_total))
-    print('total_distance_x_y_sum={0:.2f}'.format(
-        total_distance_x_y_sum / total_total))
-    print('total_height={0:.2f}'.format(total_height / total_total))
-    print('total_crash={0:.2f}'.format(total_crash / total_total))
+    print('min_distance_z={0:.4f}'.format(np.min(list_distance_z)))
+    print('max_distance_z={0:.4f}'.format(np.amax(list_distance_z)))
+    print('mean_distance_z={0:.4f}'.format(np.mean(list_distance_z)))
+    print('')
+
+    print('min_z_axis_valocity={0:.4f}'.format(np.min(list_z_axis_valocity)))
+    print('max_z_axis_valocity={0:.4f}'.format(np.amax(list_z_axis_valocity)))
+    print('mean_z_axis_valocity={0:.4f}'.format(np.mean(list_z_axis_valocity)))
+    print('')
+
+    print('min_angular_velocity={0:.4f}'.format(np.min(list_angular_velocity)))
+    print('max_angular_velocity={0:.4f}'.format(
+        np.amax(list_angular_velocity)))
+    print('mean_angular_velocity={0:.4f}'.format(
+        np.mean(list_angular_velocity)))
+    print('')
+
+    print('min_distance_x_y={0:.4f}'.format(np.min(list_distance_x_y)))
+    print('max_distance_x_y={0:.4f}'.format(np.amax(list_distance_x_y)))
+    print('mean_distance_x_y={0:.4f}'.format(np.mean(list_distance_x_y)))
+    print('')
+
+    print('min_height={0:.4f}'.format(np.min(list_height)))
+    print('max_height={0:.4f}'.format(np.amax(list_height)))
+    print('mean_height={0:.4f}'.format(np.mean(list_height)))
+    print('')
+
+    print('min_crash={0:.4f}'.format(np.min(list_crash)))
+    print('max_crash={0:.4f}'.format(np.amax(list_crash)))
+    print('mean_crash={0:.4f}'.format(np.mean(list_crash)))
+    print('')
 
 
 def plot_results(results, alpha=0.1):
