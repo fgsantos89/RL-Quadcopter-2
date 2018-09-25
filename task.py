@@ -50,22 +50,26 @@ class Task():
         # between current and target position
         distance_z = self.sim.pose[2] - self.target_pos[2]
 
-        factor_distance_z = abs(0.04 * distance_z)
+        # (-1, 0)
+        factor_distance_z = 0.1 * distance_z
         reward_parts['distance_z'] = factor_distance_z
-        reward = -factor_distance_z
+        reward = factor_distance_z
 
         # z-axis velocity in to encourage quadcopter to fly towards the target
-        z_axis_velocity = 0.03 * self.sim.v[2]
+        # -10 , 20 -> (0.15, 0.3)
+        z_axis_velocity = 0.1 * self.sim.v[2]
         reward_parts['z_axis_velocity'] = z_axis_velocity
         reward += z_axis_velocity
 
         # penalty angular velocity to make sure quadcopter flies straight up
-        angular_velocity_sum = 0.02 * abs(self.sim.angular_v).sum()
+        # 0, 90 -> 0, 0.45
+        angular_velocity_sum = 0.2 * abs(self.sim.angular_v).sum()
         reward_parts['angular_velocity_sum'] = angular_velocity_sum
         reward -= angular_velocity_sum
 
         # subtract the sum of x and y-axis to make goes straight up
-        distance_x_y_sum = 0.02 * \
+        # (-300, 300) -> (-0.3, 0.3)
+        distance_x_y_sum = 0.2 * \
             abs(self.target_pos[:2] - self.sim.pose[:2]).sum()
         reward_parts['distance_x_y_sum'] = distance_x_y_sum
         reward -= distance_x_y_sum

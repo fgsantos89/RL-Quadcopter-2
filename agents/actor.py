@@ -31,25 +31,25 @@ class Actor:
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # Add hidden layers
-        net = layers.Dense(units=64,
+        net = layers.Dense(units=100,
                            activation='relu')(states)
         # kernel_regularizer=regularizers.l2(0.0001)
         # activity_regularizer=regularizers.l1(0.01))(states)
-        # net = layers.BatchNormalization()(net)
+        net = layers.BatchNormalization()(net)
         # net = layers.Dropout(rate=0.2)(net)
 
-        net = layers.Dense(units=128,
+        net = layers.Dense(units=200,
                            activation='relu')(net)
         # kernel_regularizer=regularizers.l2(0.0001)
         # activity_regularizer=regularizers.l1(0.01))(net)
-        # net = layers.BatchNormalization()(net)
+        net = layers.BatchNormalization()(net)
         # net = layers.Dropout(rate=0.2)(net)
 
-        net = layers.Dense(units=64,
+        net = layers.Dense(units=100,
                            activation='relu')(net)
         # kernel_regularizer=regularizers.l2(0.0001)
         # activity_regularizer=regularizers.l1(0.01))(net)
-        # net = layers.BatchNormalization()(net)
+        net = layers.BatchNormalization()(net)
         # net = layers.Dropout(rate=0.2)(net)
 
         # Try different layer sizes, activations, add batch normalization,
@@ -61,7 +61,7 @@ class Actor:
                                    name='raw_actions')(net)
         # kernel_regularizer=regularizers.l2(0.0001),
         # activity_regularizer=regularizers.l1(0.01),
-        # net = layers.BatchNormalization()(raw_actions)
+        net = layers.BatchNormalization()(raw_actions)
         # net = layers.Dropout(rate=0.2)(net)
 
         # Scale [0, 1] output for each action dimension to proper range
@@ -79,7 +79,7 @@ class Actor:
         # Incorporate any additional losses here (e.g. from regularizers)
 
         # Define optimizer and training function
-        optimizer = optimizers.Adam(lr=0.0001)
+        optimizer = optimizers.Adam(lr=0.001)
         updates_op = optimizer.get_updates(
             params=self.model.trainable_weights, loss=loss)
         self.train_fn = K.function(

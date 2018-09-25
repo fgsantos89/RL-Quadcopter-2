@@ -34,9 +34,9 @@ class DDPG():
             self.actor_local.model.get_weights())
 
         # Noise process
-        self.exploration_mu = 0
-        self.exploration_theta = 1.35
-        self.exploration_sigma = 1.45
+        self.exploration_mu = 0.99
+        self.exploration_theta = 0.15
+        self.exploration_sigma = 0.2
         self.noise = OUNoise(self.action_size, self.exploration_mu,
                              self.exploration_theta, self.exploration_sigma)
         # Exploration parameters are very important for a good learning.
@@ -49,8 +49,8 @@ class DDPG():
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
 
         # Algorithm parameters
-        self.gamma = 0.95  # discount factor
-        self.tau = 0.001  # for soft update of target parameters
+        self.gamma = 0.1  # discount factor
+        self.tau = 0.0005  # for soft update of target parameters
         # Try tuning these parameters. Such as gamma between (0.95 - 0.99)
         # and tau around (0.001 - 0.01) and compare the performance.
 
