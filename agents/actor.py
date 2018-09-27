@@ -61,7 +61,7 @@ class Actor:
                                    name='raw_actions')(net)
         # kernel_regularizer=regularizers.l2(0.0001),
         # activity_regularizer=regularizers.l1(0.01),
-        net = layers.BatchNormalization()(raw_actions)
+        raw_actions = layers.BatchNormalization()(raw_actions)
         # net = layers.Dropout(rate=0.2)(net)
 
         # Scale [0, 1] output for each action dimension to proper range
@@ -79,7 +79,7 @@ class Actor:
         # Incorporate any additional losses here (e.g. from regularizers)
 
         # Define optimizer and training function
-        optimizer = optimizers.Adam(lr=0.001)
+        optimizer = optimizers.Adam(lr=0.0001)
         updates_op = optimizer.get_updates(
             params=self.model.trainable_weights, loss=loss)
         self.train_fn = K.function(

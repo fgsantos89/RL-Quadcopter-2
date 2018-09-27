@@ -46,6 +46,8 @@ class Task():
         """
         reward_parts = {}
 
+        # penalizar valores muitos altos coodenadas, velocidades
+
         # initialize a reward based on z-axis distance difference
         # between current and target position
         distance_z = self.sim.pose[2] - self.target_pos[2]
@@ -69,7 +71,7 @@ class Task():
 
         # subtract the sum of x and y-axis to make goes straight up
         # (-300, 300) -> (-0.3, 0.3)
-        distance_x_y_sum = 0.2 * \
+        distance_x_y_sum = 0.02 * \
             abs(self.target_pos[:2] - self.sim.pose[:2]).sum()
         reward_parts['distance_x_y_sum'] = distance_x_y_sum
         reward -= distance_x_y_sum

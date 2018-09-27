@@ -91,8 +91,8 @@ def run_env(agent, num_episodes, training):
                 memory_dict['runs'].append(run)
                 memory_dict['episode'].append(i_episode)
                 memory_dict['reward'].append(agent.score)
-                print("\rEpisode={:4d}, score={:7.3f} (best={:7.3f})".format(
-                    i_episode, agent.score, agent.best_score))  # [debug]
+                print("\rEpisode={:4d},total_reward={:7.3f} score={:7.3f} (best={:7.3f})"
+                      .format(i_episode, agent.total_reward, agent.score, agent.best_score))
                 sys.stdout.flush()
                 break
 
