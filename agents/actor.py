@@ -1,4 +1,4 @@
-from keras import layers, models, optimizers, regularizers
+from keras import layers, models, optimizers, regularizers, initializers
 from keras import backend as K
 
 
@@ -31,26 +31,23 @@ class Actor:
         states = layers.Input(shape=(self.state_size,), name='states')
 
         # Add hidden layers
-        net = layers.Dense(units=100,
+        net = layers.Dense(units=200,
                            activation='relu')(states)
-        # kernel_regularizer=regularizers.l2(0.0001)
-        # activity_regularizer=regularizers.l1(0.01))(states)
+        # activity_regularizer=regularizers.l2(0.01))(states)
         net = layers.BatchNormalization()(net)
-        # net = layers.Dropout(rate=0.2)(net)
+        # net = layers.Dropout(rate=0.05)(net)
+
+        net = layers.Dense(units=300,
+                           activation='relu')(net)
+        # activity_regularizer=regularizers.l2(0.01))(net)
+        net = layers.BatchNormalization()(net)
+        # net = layers.Dropout(rate=0.1)(net)
 
         net = layers.Dense(units=200,
                            activation='relu')(net)
-        # kernel_regularizer=regularizers.l2(0.0001)
-        # activity_regularizer=regularizers.l1(0.01))(net)
+        # activity_regularizer=regularizers.l2(0.01))(net)
         net = layers.BatchNormalization()(net)
-        # net = layers.Dropout(rate=0.2)(net)
-
-        net = layers.Dense(units=100,
-                           activation='relu')(net)
-        # kernel_regularizer=regularizers.l2(0.0001)
-        # activity_regularizer=regularizers.l1(0.01))(net)
-        net = layers.BatchNormalization()(net)
-        # net = layers.Dropout(rate=0.2)(net)
+        # net = layers.Dropout(rate=0.1)(net)
 
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.
@@ -60,9 +57,9 @@ class Actor:
                                    activation='sigmoid',
                                    name='raw_actions')(net)
         # kernel_regularizer=regularizers.l2(0.0001),
-        # activity_regularizer=regularizers.l1(0.01),
-        raw_actions = layers.BatchNormalization()(raw_actions)
-        # net = layers.Dropout(rate=0.2)(net)
+        # activity_regularizer=regularizers.l2(0.01),
+        # raw_actions = layers.BatchNormalization()(raw_actions)
+        # net = layers.Dropout(rate=0.05)(net)
 
         # Scale [0, 1] output for each action dimension to proper range
         actions = layers.Lambda(lambda x: ((x * self.action_range) +
@@ -79,7 +76,7 @@ class Actor:
         # Incorporate any additional losses here (e.g. from regularizers)
 
         # Define optimizer and training function
-        optimizer = optimizers.Adam(lr=0.0001)
+        optimizer = optimizers.Adam(lr=0.0001, decay=0.01)
         updates_op = optimizer.get_updates(
             params=self.model.trainable_weights, loss=loss)
         self.train_fn = K.function(

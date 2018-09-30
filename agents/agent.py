@@ -35,8 +35,8 @@ class DDPG():
 
         # Noise process
         self.exploration_mu = 0
-        self.exploration_theta = 0.35
-        self.exploration_sigma = 0.45
+        self.exploration_theta = 0.45
+        self.exploration_sigma = 0.65
         self.noise = OUNoise(self.action_size, self.exploration_mu,
                              self.exploration_theta, self.exploration_sigma)
         # Exploration parameters are very important for a good learning.
@@ -45,12 +45,12 @@ class DDPG():
 
         # Replay memory
         self.buffer_size = 100000
-        self.batch_size = 64
+        self.batch_size = 128
         self.memory = ReplayBuffer(self.buffer_size, self.batch_size)
 
         # Algorithm parameters
         self.gamma = 0.99  # discount factor
-        self.tau = 0.005  # for soft update of target parameters
+        self.tau = 0.001  # for soft update of target parameters
         # Try tuning these parameters. Such as gamma between (0.95 - 0.99)
         # and tau around (0.001 - 0.01) and compare the performance.
 

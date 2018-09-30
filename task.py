@@ -28,8 +28,8 @@ class Task():
         self.action_repeat = 3
 
         self.state_size = self.action_repeat * 6
-        self.action_low = 0  # 0
-        self.action_high = 900  # 900
+        self.action_low = 300  # 0
+        self.action_high = 700  # 900
         self.action_size = 4
 
         # save all the values of the reward to make a plot of the distribution
@@ -44,51 +44,26 @@ class Task():
         """
             Uses current pose of sim to return reward.
         """
-        reward_parts = {}
+        reward = 1
+        distance_to_target = np.linalg.norm(
+            self.target_pos - self.sim.pose[:3])
+        reward -= 0.03 * distance_to_target  # (-10, 1)
 
-        # penalizar valores muitos altos coodenadas, velocidades
+        reward -= 0.01 * abs(self.sim.angular_v).sum()
 
-        # initialize a reward based on z-axis distance difference
-        # between current and target position
-        distance_z = self.sim.pose[2] - self.target_pos[2]
+        reward -= 0.1 * abs(self.sim.pose[3:6]).sum()
 
-        # (-1, 0)
-        factor_distance_z = 0.1 * distance_z
-        reward_parts['distance_z'] = factor_distance_z
-        reward = factor_distance_z
-
-        # z-axis velocity in to encourage quadcopter to fly towards the target
-        # -10 , 20 -> (0.15, 0.3)
-        z_axis_velocity = 0.1 * self.sim.v[2]
-        reward_parts['z_axis_velocity'] = z_axis_velocity
-        reward += z_axis_velocity
-
-        # penalty angular velocity to make sure quadcopter flies straight up
-        # 0, 90 -> 0, 0.45
-        angular_velocity_sum = 0.2 * abs(self.sim.angular_v).sum()
-        reward_parts['angular_velocity_sum'] = angular_velocity_sum
-        reward -= angular_velocity_sum
-
-        # subtract the sum of x and y-axis to make goes straight up
-        # (-300, 300) -> (-0.3, 0.3)
-        distance_x_y_sum = 0.02 * \
-            abs(self.target_pos[:2] - self.sim.pose[:2]).sum()
-        reward_parts['distance_x_y_sum'] = distance_x_y_sum
-        reward -= distance_x_y_sum
+        reward += 0.2 * self.sim.v[2]
 
         # include some large bonus and penalty rewards also.
         # a bonus on achieving the target height and a penalty on crashing.
-        if abs(distance_z) <= 0.1:
-            reward_parts['height'] = 100
-            reward += 100
+        if abs(self.sim.pose[2] - self.target_pos[2]) <= 0.1:
+            reward += 10
 
         if self.sim.done and self.sim.time < self.sim.runtime:
-            reward_parts['crash'] = 100
-            reward -= 100
+            reward -= 10
 
-        # clip your final reward between (-1, 1).
-        self.rewards.append(reward_parts)
-        return np.tanh(reward)
+        return reward
 
     def step(self, rotor_speeds):
         """Uses action to obtain next state, reward, done."""

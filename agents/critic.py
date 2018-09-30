@@ -30,61 +30,57 @@ class Critic:
         actions = layers.Input(shape=(self.action_size,), name='actions')
 
         # Add hidden layer(s) for state pathway
-        net_states = layers.Dense(units=100,
+        net_states = layers.Dense(units=150,
                                   activation='relu')(states)
-        # kernel_regularizer=regularizers.l2(0.000001)
-        # activity_regularizer=regularizers.l1(0.01))(states)
+        # activity_regularizer=regularizers.l2(0.00001)
         net_states = layers.BatchNormalization()(net_states)
-        # net_states = layers.Dropout(rate=0.2)(net_states)
+        # net_states = layers.Dropout(rate=0.1)(net_states)
 
-        net_states = layers.Dense(units=200,
+        net_states = layers.Dense(units=300,
                                   activation='relu')(net_states)
-        # kernel_regularizer=regularizers.l2(0.000001)
-        # activity_regularizer=regularizers.l1(0.01))(net_states)
+        # activity_regularizer=regularizers.l2(0.00001)
         net_states = layers.BatchNormalization()(net_states)
-        # net_states = layers.Dropout(rate=0.2)(net_states)
+        # net_states = layers.Dropout(rate=0.1)(net_states)
 
         # Add hidden layer(s) for action pathway
-        net_actions = layers.Dense(units=100,
+        net_actions = layers.Dense(units=150,
                                    activation='relu')(actions)
-        # kernel_regularizer=regularizers.l2(0.000001)
-        # activity_regularizer=regularizers.l1(0.01))(actions)
+        # activity_regularizer=regularizers.l2(0.00001)
         net_actions = layers.BatchNormalization()(net_actions)
-        # net_actions = layers.Dropout(rate=0.2)(net_actions)
+        # net_actions = layers.Dropout(rate=0.1)(net_actions)
 
-        net_actions = layers.Dense(units=200,
+        net_actions = layers.Dense(units=300,
                                    activation='relu')(net_actions)
-        # kernel_regularizer=regularizers.l2(0.000001)
-        # activity_regularizer=regularizers.l1(0.01))(net_actions)
+        # activity_regularizer=regularizers.l2(0.00001)
         net_actions = layers.BatchNormalization()(net_actions)
-        # net_actions = layers.Dropout(rate=0.2)(net_actions)
+        # net_actions = layers.Dropout(rate=0.1)(net_actions)
 
         # Try different layer sizes, activations, add batch normalization,
         # regularizers, etc.
 
         # Combine state and action pathways
         net = layers.Add()([net_states, net_actions])
+        net = layers.Activation('tanh')(net)
 
-        net = layers.Dense(units=100, activation='relu')(net)
-        net = layers.BatchNormalization()(net)
-
-        net = layers.Dense(units=50, activation='relu')(net)
-        net = layers.BatchNormalization()(net)
+        # net = layers.Dense(units=100,
+        #                    activation='relu',
+        #                    kernel_regularizer=regularizers.l1(0.00001))(net)
+        # net = layers.BatchNormalization()(net)
+        # net = layers.Dropout(rate=0.1)(net)
 
         # Add more layers to the combined network if needed
 
         # Add final output layer to prduce action values (Q values)
-        Q_values = layers.Dense(
-            units=1, name='q_values', activation='relu')(net)
+        Q_values = layers.Dense(units=1, name='q_values')(net)
 
         # Create Keras model
         self.model = models.Model(inputs=[states, actions], outputs=Q_values)
 
         # Define optimizer and compile model for training with
         # built-in loss function
-        optimizer = optimizers.Adam(lr=0.0001)
+        optimizer = optimizers.Adam(lr=0.0001, decay=0.01)
         self.model.compile(optimizer=optimizer,
-                           loss='mean_squared_logarithmic_error')
+                           loss='mse')
 
         # Compute action gradients (derivative of Q values w.r.t. to actions)
         action_gradients = K.gradients(Q_values, actions)
